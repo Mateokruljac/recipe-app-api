@@ -1,0 +1,16 @@
+version: "20.10.21"
+
+services: # main
+  app: # folder 
+    build: # build context of current directory 
+      context: .
+      args:
+        - DEV=true  
+    ports: # port on local machine
+      - "8000:8000"  
+    volumes:
+      - ./app:/app
+    command: 
+      sh -c "python manage.py runserver 0.0.0.0:8000"
+
+# rebuild container 

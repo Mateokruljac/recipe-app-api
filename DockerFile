@@ -1,0 +1,38 @@
+FROM python:3.9-alpine3.13
+LABEL maintainer=""
+
+# dont want to buffer the output of Python code 
+ENV PYTHONBUFFERED 1 
+
+COPY ./requirements.txt /tmp/requirements.txt
+COPY ./requirements.dev.txt /tmp/requirements.dev.txt
+COPY ./app /app 
+WORKDIR /app 
+EXPOSE 8000 
+
+# default value to false 
+ARG DEV=false 
+# first line create a new virtual environment 
+RUN python -m venv /py && \
+    #  specify the full path of venv 
+    /py/bin/pip install --upgrade pip &&\ 
+    # install requirements file 
+    /py/bin/pip install -r /tmp/requirements.txt && \
+    # after that remove tmp (temporary file stores information temporarily), and remove data when it is not longer needed
+    if [dev= "true"]; then /py/bin/pip install -r /tmp/requirements.dev.txt; \ 
+    # if -> reversed 
+    fi && \   
+    rm -rf /tmp && \
+    # add user inside image, the best practice is not to use root user because 
+    # root user has all permission and actions 
+    # attacker then can do what limited user can do 
+    adduser \
+    --disabled-password \ 
+    --no-create-home \
+    django-user 
+
+# enviroment variable inside image 
+ENV PATH="/py/bin:$PATH"
+
+# user should be a last line in dockerFile -> not have a root privilegies
+USER django-user 

@@ -10,7 +10,22 @@ services: # main
       - "8000:8000"  
     volumes:
       - ./app:/app
-    command: 
+    command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
-
+    environment: # should match environment
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+  
+  db:
+    image: postgres:13-alpine # search on docker hub 
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data # should mach the name of volumes
+    environment: # should match environment 
+      - POSTGRES_DB=devdb
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+volumes:
+  dev-db-data: 
 # rebuild container 

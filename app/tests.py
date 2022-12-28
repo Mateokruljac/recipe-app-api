@@ -2,6 +2,8 @@
 Simple tests
 """
 from django.test import SimpleTestCase
+from rest_framework.test import APIClient
+
 from app import calc 
 
 class CalcTests(SimpleTestCase):
@@ -18,3 +20,8 @@ class CalcTests(SimpleTestCase):
         """ Test substract numbers"""
         res = calc.substract_numbers(10,15)
         self.assertEqual(res,5)
+        
+    def test_greeting(self):
+        client = APIClient()
+        res = client.get("https://learn.microsoft.com/hr-hr/windows/wsl/install-manual#step-4---download-the-linux-kernel-update-package")
+        self.assertEqual(res.status_code,200)

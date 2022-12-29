@@ -16,6 +16,9 @@ ARG DEV=false
 RUN python -m venv /py && \
     #  specify the full path of venv 
     /py/bin/pip install --upgrade pip &&\ 
+    # should mach other 
+    apk add --update --no-cache --virtual .tmp-build-deps \  
+    build base postgresql-dev musl-dev && \ 
     # install requirements file 
     /py/bin/pip install -r /tmp/requirements.txt && \
     # after that remove tmp (temporary file stores information temporarily), and remove data when it is not longer needed
@@ -23,6 +26,7 @@ RUN python -m venv /py && \
     # if -> reversed 
     fi && \   
     rm -rf /tmp && \
+    apk del .tmp-build-deps && \
     # add user inside image, the best practice is not to use root user because 
     # root user has all permission and actions 
     # attacker then can do what limited user can do 
